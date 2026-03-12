@@ -86,14 +86,17 @@ export const useStore = create((set, get) => ({
 
   // GitHub OAuth — redirect to GitHub
   githubLogin: async () => {
-    set({ authLoading: true, authError: null });
+    set({ authLoading: true });
     try {
       const data = await api('/users/github/login');
       if (data.url) {
         window.location.href = data.url;
       }
     } catch (err) {
-      set({ authError: err.error || 'GitHub 登录暂不可用', authLoading: false });
+      // Don't pollute authError — GitHub failure shouldn't block normal login form
+      console.warn('GitHub OAuth unavailable:', err.error || err);
+      set({ authLoading: false });
+      throw err; // Let caller handle
     }
   },
 
