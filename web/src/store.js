@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3210/api';
+// Priority: URL param ?api= > runtime config.js > build-time VITE_API_URL > localhost fallback
+const _urlApi = new URLSearchParams(window.location.search).get('api');
+const _runtimeApi = window.__CLAW_CONFIG__?.API_URL;
+const API_BASE = _urlApi || _runtimeApi || import.meta.env.VITE_API_URL || 'http://localhost:3210/api';
 
 // ── API helper ──────────────────────────────────────
 async function api(path, options = {}) {

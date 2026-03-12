@@ -37,6 +37,10 @@ jobs:
         env:
           VITE_API_URL: ${{ vars.API_URL || 'https://claw-memory-api.example.com/api' }}
 
+      - name: Write runtime config
+        run: |
+          echo "window.__CLAW_CONFIG__ = { API_URL: '${{ vars.API_URL }}' };" > web/dist/config.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
