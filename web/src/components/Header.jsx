@@ -16,7 +16,7 @@ export default function Header() {
             <span className="text-2xl">🧠</span>
             <div>
               <h1 className="text-lg font-bold gradient-text leading-tight">
-                Claw 记忆存储市场
+                SaveClaw 记忆存储市场
               </h1>
               <p className="text-xs text-mako-600 leading-tight">
                 AI Agent 记忆的安全港

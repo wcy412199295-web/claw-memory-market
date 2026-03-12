@@ -16,6 +16,7 @@ export default function UploadPage() {
     price: '0',
     tags: '',
     file: null,
+    isPublic: true,
   });
   const [step, setStep] = useState(1); // 1: form, 2: uploading, 3: done
   const [error, setError] = useState(null);
@@ -66,7 +67,7 @@ export default function UploadPage() {
         <div className="text-6xl mb-6">🎉</div>
         <h2 className="text-2xl font-bold gradient-text mb-4">上传成功！</h2>
         <p className="text-mako-600 mb-8">
-          你的记忆包已经上架到 Claw 记忆存储市场。
+          你的记忆包已经上架到 SaveClaw 记忆存储市场。
         </p>
         <div className="flex gap-4 justify-center">
           {createdId && (
@@ -259,6 +260,33 @@ export default function UploadPage() {
                        text-mako-800 placeholder-mako-500 text-sm
                        focus:outline-none focus:border-claw-primary transition-all"
           />
+        </div>
+
+        {/* Public toggle */}
+        <div className="flex items-center justify-between bg-mako-200 border border-mako-300 rounded-xl p-4">
+          <div>
+            <p className="text-sm text-mako-700 font-medium">
+              {form.isPublic ? '🌍 公开记忆' : '🔒 私有记忆'}
+            </p>
+            <p className="text-xs text-mako-500 mt-1">
+              {form.isPublic
+                ? '所有人可在市场浏览和购买'
+                : '仅自己可见，不会出现在市场中'}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setForm({ ...form, isPublic: !form.isPublic })}
+            className={`relative w-12 h-6 rounded-full transition-colors ${
+              form.isPublic ? 'bg-claw-primary' : 'bg-mako-400'
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                form.isPublic ? 'translate-x-6' : 'translate-x-0.5'
+              }`}
+            />
+          </button>
         </div>
 
         {error && (

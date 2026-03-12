@@ -24,7 +24,7 @@ export default function MarketPage() {
       {/* Hero */}
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold mb-3">
-          <span className="gradient-text">Claw 记忆存储市场</span>
+          <span className="gradient-text">SaveClaw 记忆存储市场</span>
         </h2>
         <p className="text-mako-600 max-w-2xl mx-auto">
           安全存储、自由分享你的 AI Agent 记忆。

@@ -138,7 +138,7 @@ router.get('/:id', async (req, res) => {
 // ── Upload new listing ──────────────────────────────
 router.post('/', requireAuth, upload.single('file'), async (req, res) => {
   try {
-    const { title, description, agentName, agentModel, price, currency, tags } = req.body;
+    const { title, description, agentName, agentModel, price, currency, tags, isPublic } = req.body;
 
     if (!title || !req.file) {
       return res.status(400).json({ error: 'Title and file are required' });
@@ -176,6 +176,7 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
       memory_count: memoryCount,
       session_count: sessionCount,
       skill_count: skillCount,
+      is_public: isPublic !== 'false',
     });
 
     if (error) throw error;
