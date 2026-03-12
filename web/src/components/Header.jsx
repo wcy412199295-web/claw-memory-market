@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useStore } from '../store';
-import { User, LogOut, Wallet } from 'lucide-react';
+import { User, LogOut, Wallet, Github } from 'lucide-react';
 
 export default function Header() {
   const user = useStore(s => s.user);
@@ -16,10 +16,10 @@ export default function Header() {
             <span className="text-2xl">🧠</span>
             <div>
               <h1 className="text-lg font-bold gradient-text leading-tight">
-                Claw Memory Market
+                Claw 记忆存储市场
               </h1>
               <p className="text-xs text-mako-600 leading-tight">
-                记忆交易市场
+                AI Agent 记忆的安全港
               </p>
             </div>
           </Link>
@@ -41,6 +41,13 @@ export default function Header() {
               📦 上传记忆
             </Link>
 
+            <Link
+              to="/feedback"
+              className="text-sm text-mako-700 hover:text-claw-primary transition-colors"
+            >
+              💬 反馈
+            </Link>
+
             {user ? (
               <div className="flex items-center gap-3">
                 {/* Balance */}
@@ -54,10 +61,14 @@ export default function Header() {
                   to="/profile"
                   className="w-8 h-8 rounded-full bg-claw-primary/20 flex items-center justify-center
                             text-xs text-claw-primary border border-claw-primary/30 cursor-pointer
-                            hover:border-claw-primary transition-colors"
+                            hover:border-claw-primary transition-colors overflow-hidden"
                   title={user.displayName || user.username}
                 >
-                  {(user.displayName || user.username || 'U')[0].toUpperCase()}
+                  {user.avatarUrl ? (
+                    <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    (user.displayName || user.username || 'U')[0].toUpperCase()
+                  )}
                 </Link>
 
                 {/* Logout */}
@@ -76,7 +87,7 @@ export default function Header() {
                           transition-colors border border-mako-400 px-3 py-1.5 rounded-lg
                           hover:border-claw-primary/50"
               >
-                <User size={14} />
+                <Github size={14} />
                 登录
               </button>
             )}

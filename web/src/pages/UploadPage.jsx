@@ -66,7 +66,7 @@ export default function UploadPage() {
         <div className="text-6xl mb-6">🎉</div>
         <h2 className="text-2xl font-bold gradient-text mb-4">上传成功！</h2>
         <p className="text-mako-600 mb-8">
-          你的记忆包已经上架到 Claw Memory Market。
+          你的记忆包已经上架到 Claw 记忆存储市场。
         </p>
         <div className="flex gap-4 justify-center">
           {createdId && (
@@ -98,9 +98,19 @@ export default function UploadPage() {
       </button>
 
       <h2 className="text-2xl font-bold gradient-text mb-2">上传记忆包</h2>
-      <p className="text-mako-600 mb-8">
-        将你的 .clawmem 文件上架到交易市场
+      <p className="text-mako-600 mb-4">
+        将你的 .clawmem 文件上架到记忆存储市场
       </p>
+
+      {/* 隐私脱敏提示 */}
+      <div className="bg-claw-purple/10 border border-claw-purple/20 rounded-xl p-4 mb-8">
+        <p className="text-sm text-claw-purple font-medium mb-2">🛡️ 隐私安全提示</p>
+        <ul className="text-xs text-mako-600 space-y-1">
+          <li>• 上传前请确保记忆文件中<strong className="text-mako-800">不包含 API 密钥、账号 ID、个人隐私数据</strong></li>
+          <li>• 系统会自动检测并过滤常见的敏感信息模式（API Key / Token / 手机号等）</li>
+          <li>• 建议使用 <code className="text-claw-primary">claw-memory pack --sanitize</code> 进行打包前脱敏</li>
+        </ul>
+      </div>
 
       {!user && (
         <div className="bg-claw-accent/10 border border-claw-accent/20 rounded-xl p-4 mb-6 text-center">
@@ -146,12 +156,18 @@ export default function UploadPage() {
           </label>
         </div>
 
-        {/* CLI tip */}
+        {/* CLI tip — 一键打包 */}
         <div className="bg-mako-100 border border-mako-300 rounded-xl p-4">
-          <p className="text-xs text-mako-600 mb-2">💡 还没有 .clawmem 文件？用 CLI 打包：</p>
-          <code className="block bg-mako-200 rounded-lg px-4 py-2 text-sm text-claw-primary">
+          <p className="text-xs text-mako-600 mb-2">💡 <strong>一键打包</strong>：还没有 .clawmem 文件？用 CLI 一键生成：</p>
+          <code className="block bg-mako-200 rounded-lg px-4 py-2 text-sm text-claw-primary mb-2">
             npx claw-memory pack --agent main --output my-agent.clawmem
           </code>
+          <p className="text-xs text-mako-500 mb-1">
+            🛡️ 添加 <code className="text-claw-primary">--sanitize</code> 参数自动脱敏敏感信息（API Key / Token 等）
+          </p>
+          <p className="text-xs text-mako-500">
+            🤖 打包时会自动读取 Claw bot 配置并作为记忆包头像
+          </p>
         </div>
 
         {/* Title */}

@@ -84,6 +84,49 @@ export const useStore = create((set, get) => ({
     }
   },
 
+  // GitHub OAuth — redirect to GitHub
+  githubLogin: async () => {
+    set({ authLoading: true, authError: null });
+    try {
+      const data = await api('/users/github/login');
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      set({ authError: err.error || 'GitHub 登录暂不可用', authLoading: false });
+    }
+  },
+
+  // Handle GitHub OAuth callback token from URL
+  handleGithubCallback: () => {
+    const params = new URLSearchParams(window.location.search);
+    const githubToken = params.get('github_token');
+    const authError = params.get('auth_error');
+
+    if (githubToken) {
+      localStorage.setItem('claw_token', githubToken);
+      set({ token: githubToken, showAuthModal: false });
+      // Clean URL
+      window.history.replaceState({}, '', window.location.pathname);
+      // Fetch user profile
+      get().fetchMe();
+      return true;
+    }
+    if (authError) {
+      const errorMap = {
+        no_code: 'GitHub 授权失败',
+        token_failed: 'GitHub Token 获取失败',
+        user_fetch_failed: '无法获取 GitHub 用户信息',
+        db_error: '创建账户失败',
+        server_error: '服务器错误',
+      };
+      set({ authError: errorMap[authError] || authError, showAuthModal: true });
+      window.history.replaceState({}, '', window.location.pathname);
+      return true;
+    }
+    return false;
+  },
+
   logout: () => {
     localStorage.removeItem('claw_token');
     set({ user: null, token: null, myListings: [], myPurchases: [], mySales: [] });

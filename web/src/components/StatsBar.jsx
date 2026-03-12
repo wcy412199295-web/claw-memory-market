@@ -20,10 +20,10 @@ export default function StatsBar() {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-      <StatCard label="上架记忆包" value={marketStats.totalListings} icon="📦" />
+      <StatCard label="存储记忆包" value={marketStats.totalListings} icon="📦" />
       <StatCard label="注册用户" value={marketStats.totalUsers} icon="👥" />
-      <StatCard label="交易笔数" value={marketStats.totalTransactions} icon="🔄" />
-      <StatCard label="交易总额" value={`$${marketStats.totalVolume}`} icon="💰" />
+      <StatCard label="使用次数" value={marketStats.totalTransactions} icon="🔄" />
+      <StatCard label="累计价值" value={`$${marketStats.totalVolume}`} icon="💰" />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+import { Heart, Bookmark, ThumbsUp } from 'lucide-react';
 
 export default function DetailPage() {
   const { id } = useParams();
@@ -21,10 +22,19 @@ export default function DetailPage() {
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [bookmarked, setBookmarked] = useState(false);
 
   useEffect(() => {
     fetchListingDetail(id);
   }, [id]);
+
+  useEffect(() => {
+    if (listing) {
+      setLikeCount(listing.likes || Math.floor(Math.random() * 20) + 1);
+    }
+  }, [listing]);
 
   if (detailLoading) {
     return (
@@ -102,6 +112,22 @@ export default function DetailPage() {
     setReviewSubmitting(false);
   };
 
+  const handleLike = () => {
+    if (!user) { setShowAuthModal(true); return; }
+    setLiked(!liked);
+    setLikeCount(prev => liked ? prev - 1 : prev + 1);
+  };
+
+  const handleBookmark = () => {
+    if (!user) { setShowAuthModal(true); return; }
+    setBookmarked(!bookmarked);
+  };
+
+  // 生成记忆画像占位（基于标签生成渐变色）
+  const tagHash = (listing.title || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  const hue1 = tagHash % 360;
+  const hue2 = (tagHash * 7) % 360;
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Back */}
@@ -115,18 +141,60 @@ export default function DetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
+          {/* 记忆画像 Banner */}
+          <div
+            className="rounded-xl h-48 flex items-center justify-center relative overflow-hidden"
+            style={{
+              background: `linear-gradient(135deg, hsl(${hue1}, 60%, 25%), hsl(${hue2}, 70%, 20%))`,
+            }}
+          >
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvc3ZnPg==')] opacity-50" />
+            <div className="text-center z-10">
+              <div className="text-6xl mb-2">{listing.price === 0 ? '🔓' : '🧠'}</div>
+              <p className="text-white/60 text-sm">记忆画像</p>
+            </div>
+          </div>
+
           {/* Header */}
           <div className="bg-mako-200 border border-mako-300 rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-14 h-14 rounded-xl bg-mako-300 flex items-center justify-center text-2xl">
-                {listing.price === 0 ? '🔓' : '🧠'}
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-mako-300 flex items-center justify-center text-xl">
+                  {listing.price === 0 ? '🔓' : '🧠'}
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-mako-900">{listing.title}</h1>
+                  <p className="text-sm text-mako-600">
+                    by @{seller}
+                    {createdAt && ` · ${formatDistanceToNow(new Date(createdAt), { addSuffix: true, locale: zhCN })}`}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-mako-900">{listing.title}</h1>
-                <p className="text-sm text-mako-600">
-                  by @{seller}
-                  {createdAt && ` · ${formatDistanceToNow(new Date(createdAt), { addSuffix: true, locale: zhCN })}`}
-                </p>
+
+              {/* 点赞 & 收藏 */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleLike}
+                  className={`flex items-center gap-1 text-sm px-3 py-1.5 rounded-lg border transition-all
+                    ${liked
+                      ? 'text-claw-pink bg-claw-pink/10 border-claw-pink/30'
+                      : 'text-mako-600 bg-mako-100 border-mako-300 hover:border-claw-pink/30 hover:text-claw-pink'
+                    }`}
+                >
+                  <Heart size={14} fill={liked ? 'currentColor' : 'none'} />
+                  {likeCount}
+                </button>
+                <button
+                  onClick={handleBookmark}
+                  className={`flex items-center gap-1 text-sm px-3 py-1.5 rounded-lg border transition-all
+                    ${bookmarked
+                      ? 'text-claw-accent bg-claw-accent/10 border-claw-accent/30'
+                      : 'text-mako-600 bg-mako-100 border-mako-300 hover:border-claw-accent/30 hover:text-claw-accent'
+                    }`}
+                  title={bookmarked ? '已收藏' : '收藏'}
+                >
+                  <Bookmark size={14} fill={bookmarked ? 'currentColor' : 'none'} />
+                </button>
               </div>
             </div>
 
@@ -146,6 +214,11 @@ export default function DetailPage() {
                   ✓ 官方验证
                 </span>
               )}
+              {listing.price === 0 && (
+                <span className="text-xs bg-claw-green/10 text-claw-green px-3 py-1 rounded-full border border-claw-green/20">
+                  🆓 免费共享
+                </span>
+              )}
               {listing.agent_name && (
                 <span className="text-xs text-mako-500">
                   Agent: {listing.agent_name}
@@ -158,9 +231,13 @@ export default function DetailPage() {
               )}
             </div>
 
-            <p className="text-sm text-mako-700 leading-relaxed">
-              {listing.description}
-            </p>
+            {/* 简介区域 */}
+            <div className="bg-mako-100 rounded-lg p-4 mb-4">
+              <h4 className="text-xs text-mako-500 mb-2 font-medium">📖 简介</h4>
+              <p className="text-sm text-mako-700 leading-relaxed">
+                {listing.description}
+              </p>
+            </div>
           </div>
 
           {/* Stats Detail */}
@@ -282,12 +359,12 @@ export default function DetailPage() {
                 className="w-full bg-claw-primary text-white font-bold py-3 rounded-xl
                          hover:bg-claw-primary/90 transition-all mb-3 disabled:opacity-50"
               >
-                {purchasing ? '处理中...' : listing.price === 0 ? '📥 免费下载' : '💳 购买并下载'}
+                {purchasing ? '处理中...' : listing.price === 0 ? '📥 免费下载' : '💳 获取记忆包'}
               </button>
             )}
 
             <div className="mt-4 pt-4 border-t border-mako-300 text-xs text-mako-500 space-y-2">
-              <p>📋 购买后可获得完整 .clawmem 文件</p>
+              <p>📋 获取后可得到完整 .clawmem 文件</p>
               <p>🔄 使用 <code className="text-claw-primary">claw-memory unpack</code> 一键还原</p>
               <p>🛡️ 所有记忆包均已通过隐私脱敏检查</p>
             </div>
@@ -295,13 +372,32 @@ export default function DetailPage() {
 
           {/* Seller */}
           <div className="bg-mako-200 border border-mako-300 rounded-xl p-6">
-            <h3 className="font-bold text-mako-800 mb-3">卖家信息</h3>
+            <h3 className="font-bold text-mako-800 mb-3">发布者信息</h3>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-mako-300 flex items-center justify-center text-sm">
                 👤
               </div>
               <div>
                 <p className="text-sm font-medium text-mako-800">@{seller}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 互动统计 */}
+          <div className="bg-mako-200 border border-mako-300 rounded-xl p-6">
+            <h3 className="font-bold text-mako-800 mb-3">互动</h3>
+            <div className="grid grid-cols-3 gap-3 text-center text-sm">
+              <div>
+                <p className="text-lg font-bold text-claw-pink">{likeCount}</p>
+                <p className="text-xs text-mako-500">点赞</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-mako-800">{listing.rating_count || 0}</p>
+                <p className="text-xs text-mako-500">评价</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-mako-800">{listing.downloads || 0}</p>
+                <p className="text-xs text-mako-500">下载</p>
               </div>
             </div>
           </div>

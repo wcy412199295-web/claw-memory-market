@@ -40,6 +40,11 @@ export default function ListingCard({ listing }) {
           </div>
         </div>
         <div className="flex items-center gap-1.5">
+          {listing.price === 0 && (
+            <span className="text-xs bg-claw-green/10 text-claw-green px-2 py-0.5 rounded-full border border-claw-green/20">
+              🆓 免费
+            </span>
+          )}
           {listing.verified && (
             <span className="text-xs bg-claw-green/10 text-claw-green px-2 py-0.5 rounded-full border border-claw-green/20">
               ✓ 已验证
@@ -101,6 +106,7 @@ export default function ListingCard({ listing }) {
           <span>⭐ {listing.rating || '—'}</span>
           <span>💬 {ratingCount}</span>
           <span>📥 {listing.downloads || 0}</span>
+          <span>❤️ {listing.likes || 0}</span>
         </div>
         <div className="font-bold text-lg">
           {listing.price === 0 ? (

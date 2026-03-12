@@ -3,7 +3,11 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/claw-memory-market/',
+  base: '/',
+  server: {
+    port: 5173,
+    host: true
+  },
   build: {
     outDir: 'dist'
   }
