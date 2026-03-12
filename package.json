@@ -1,0 +1,20 @@
+{
+  "name": "claw-memory-market",
+  "version": "0.1.0",
+  "description": "Claw Memory Market — 记忆打包、交易与迁移平台",
+  "private": true,
+  "workspaces": [
+    "cli",
+    "web",
+    "server"
+  ],
+  "scripts": {
+    "dev:web": "cd web && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "build:web": "cd web && npm run build",
+    "pack": "cd cli && node index.js pack",
+    "verify": "cd cli && node index.js verify"
+  },
+  "author": "L",
+  "license": "MIT"
+}
